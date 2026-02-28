@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+  </head>
+  <body style="background-color: aliceblue">
+    <div
+      class="bg-white flex items-center justify-center flex-col container mx-auto border-0 shadow-2xl w-[400px] min-h-[250px] mt-30 rounded-2xl p-4"
+    >
+      <input
+        id="input"
+        type="text"
+        placeholder="Enter IP Address"
+        class="hover:shadow-lg outline-0 shadow py-1 px-2 border border-gray-300 rounded-full w-full max-w-[250px]"
+      />
+      <button
+        id="btn"
+        class="bg-blue-500 hover:bg-blue-600 hover:shadow-lg hover:text-white cursor-pointer text-white px-4 py-2 rounded-lg mt-2"
+      >
+        Get Data
+      </button>
+
+      <!-- Results section with better alignment -->
+      <div
+        id="result"
+        class="mt-4 w-full text-left space-y-1 text-sm bg-gray-50 p-3 rounded-lg border border-gray-200 hidden"
+      ></div>
+    </div>
+
+    <script>
+      let btn = document.getElementById("btn");
+      let result = document.getElementById("result");
+
+      btn.addEventListener("click", getData);
+
+      async function getData() {
+        try {
+          let ip = document.getElementById("input").value;
+
+          // Validate IP input
+          if (!ip) {
+            result.classList.remove("hidden");
+            result.innerHTML = `<p class="text-red-500 text-center">Please enter an IP address</p>`;
+            return;
+          }
+
+          let apiUrl = `http://ip-api.com/json/${ip}`;
+          let response = await fetch(apiUrl);
+          let data = await response.json();
+
+          console.log(data);
+
+          // Show the result div
+          result.classList.remove("hidden");
+
+          // Display data in a nicely formatted way
+          result.innerHTML = `
+            <div class="grid grid-cols-2 gap-2">
+              <div class="font-semibold text-gray-600">Country:</div>
+              <div class="text-gray-800">${data.country || "N/A"}</div>
+              
+              <div class="font-semibold text-gray-600">City:</div>
+              <div class="text-gray-800">${data.city || "N/A"}</div>
+              
+              <div class="font-semibold text-gray-600">Latitude:</div>
+              <div class="text-gray-800">${data.lat || "N/A"}</div>
+              
+              <div class="font-semibold text-gray-600">Longitude:</div>
+              <div class="text-gray-800">${data.lon || "N/A"}</div>
+              
+              <div class="font-semibold text-gray-600">Timezone:</div>
+              <div class="text-gray-800">${data.timezone || "N/A"}</div>
+            </div>
+          `;
+        } catch (error) {
+          console.log(error);
+          result.classList.remove("hidden");
+          result.innerHTML = `<p class="text-red-500 text-center">Error fetching data. Please try again.</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>
